@@ -1,0 +1,13 @@
+{
+    "name": "Private Message Sender",
+    "version": "0.0.1",
+    "description": "Send primate message",
+    "permissions": [],
+    "content_scripts": [
+      {
+        "matches": ["https://web.whatsapp.com/"],
+        "js": ["main.js"]
+      }
+    ],
+    "manifest_version": 2
+  }
