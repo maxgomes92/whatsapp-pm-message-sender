@@ -1,45 +1,33 @@
-const getChatEl = (title) => document.querySelector(`span[title="${title}"]`)
-const getMessageInputEl = () => document.querySelector('div[spellcheck=true]')
-const getSendButton = () => document.querySelector('span[data-testid="send"]')
-
-let obj = {
-  charCode: 97,
-  code: "KeyA",
-  key: "a",
-  keyCode: 97,
-  type: "keypress",
-  which: 97,
+function main () {
+  sendMessageTo('Andrei')
 }
 
-const setMessage = (msg) => {
-  const msgEl = getMessageInputEl()
+const getChatEl = (title) => waitUntilYouFind(`span[title="${title}"]`)
+const getMessageInputEl = () => waitUntilYouFind('div[spellcheck="true"]')
+const getSendButton = () => waitUntilYouFind('span[data-testid="send"]')
 
-  msgEl.dispatchEvent(new KeyboardEvent("keypress", obj))
+const setMessage = async (msg) => {
+  const msgEl = await getMessageInputEl()
 
-  // msgEl.textContent = msg
+  msgEl.textContent = msg
+  msgEl.dispatchEvent(new Event('input', { bubbles: true }))
 }
 
-const sendMessage = () => {
-  const sendButton = getSendButton()
+const sendMessage = async () => {
+  const sendButton = await getSendButton()
   sendButton.click()
 }
 
-const openChat = (name) => {
-  const el = getChatEl(name)
+const openChat = async (name) => {
+  const el = await getChatEl(name)
 
   el.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
 }
 
-const sendMessageTo = (name) => {
-  openChat(name)
-
-  setTimeout(() => {
-    setMessage('salve do bot')
-    sendMessage()
-  }, 2000)
+const sendMessageTo = async (name) => {
+  await openChat(name)
+  await setMessage('salve do bot')
+  await sendMessage()
 }
 
-
-setTimeout(() => {
-  sendMessageTo('Luan')
-}, 5000)
+main()
