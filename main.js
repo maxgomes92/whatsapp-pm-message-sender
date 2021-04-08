@@ -1,21 +1,68 @@
 function main () {
-  sendMessageTo('Luan')
+  loadContacts()
+  // sendMessageTo('Andrei')
+}
+
+async function loadContacts () {
+  let contacts = load('contacts')
+
+  if (!contacts) {
+    contacts = await fetchAllContacts()
+    save('contacts', contacts)
+  }
+
+  return contacts
+}
+
+function save (key, data) {
+  localStorage.setItem(key, JSON.stringify(data))
+}
+
+function load (key) {
+  const data = localStorage.getItem(key)
+  return data ? JSON.parse(data) : undefined
+}
+
+const waitFor = (time) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve()
+  }, time)
+})
+
+const fetchAllContacts = async () => {
+  const paneSide = await getPaneSide()
+  const chatList = Array.from((await getChatList()).children)
+
+  const scrollingStep = (chatList[0].clientHeight * chatList.length) * 0.5
+
+  const contacts = new Set()
+
+  do {
+    paneSide.scrollTop += scrollingStep;
+
+    await waitFor(100)
+
+    chatList.forEach((chatEl) => {
+      const titleEl = chatEl.querySelector('span[title]')
+      contacts.add(titleEl.getAttribute('title'))
+    })
+  } while ((paneSide.scrollTop + paneSide.offsetHeight) !== paneSide.scrollHeight)
+
+  paneSide.scrollTop = 0
+
+  return Array.from(contacts).sort()
 }
 
 const getChatEl = (title) => waitUntilYouFind(`span[title="${title}"]`)
 const getMessageInputEl = () => waitUntilYouFind('div[spellcheck="true"]')
 const getSendButton = () => waitUntilYouFind('span[data-testid="send"]')
 const getSearchInput = () => waitUntilYouFind('div[id="side"] div[contenteditable="true"]')
+const getPaneSide = () => waitUntilYouFind('#pane-side')
+const getChatList = () => waitUntilYouFind('div[aria-label="Chat list"]')
 
 const setMessage = async (msg) => {
   const msgEl = await getMessageInputEl()
   setTextContent(msgEl, msg)
-}
-
-const searchForContact = async (name) => {
-  // TODO: Not typing
-  const searchEl = await getSearchInput()
-  setTextContent(searchEl, name)
 }
 
 const setTextContent = (el, msg) => {
@@ -29,9 +76,7 @@ const sendMessage = async () => {
 }
 
 const openChat = async (name) => {
-  // await searchForContact(name)
   const el = await getChatEl(name)
-
   el.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
 }
 
