@@ -1,6 +1,6 @@
 function main () {
   loadContacts()
-  // sendMessageTo('Andrei')
+  sendMessageTo('Luan')
 }
 
 async function loadContacts () {
@@ -53,7 +53,6 @@ const fetchAllContacts = async () => {
   return Array.from(contacts).sort()
 }
 
-const getChatEl = (title) => waitUntilYouFind(`span[title="${title}"]`)
 const getMessageInputEl = () => waitUntilYouFind('div[spellcheck="true"]')
 const getSendButton = () => waitUntilYouFind('span[data-testid="send"]')
 const getSearchInput = () => waitUntilYouFind('div[id="side"] div[contenteditable="true"]')
@@ -75,9 +74,32 @@ const sendMessage = async () => {
   sendButton.click()
 }
 
-const openChat = async (name) => {
+async function openChat (name) {
   const el = await getChatEl(name)
   el.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
+}
+
+async function getChatEl (name) {
+  const getEl = (title) => document.querySelector(`span[title="${title}"]`)
+
+  const paneSide = await getPaneSide()
+  const chatList = Array.from((await getChatList()).children)
+
+  const scrollingStep = (chatList[0].clientHeight * chatList.length) * 0.5
+
+  do {
+    paneSide.scrollTop += scrollingStep;
+
+    await waitFor(100)
+
+    const chatEl = getEl(name)
+
+    if (chatEl) {
+      return chatEl
+    }
+  } while ((paneSide.scrollTop + paneSide.offsetHeight) !== paneSide.scrollHeight)
+
+  throw new Error('Can\'t find contact' + name)
 }
 
 const sendMessageTo = async (name) => {
