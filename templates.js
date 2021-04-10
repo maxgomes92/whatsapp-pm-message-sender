@@ -1,5 +1,3 @@
-const l = console.log
-
 const template = {
   id: getRandomId(),
   title: 'Template zica',
@@ -15,9 +13,13 @@ function main () {
   addNewContact()
   updateContactVariables()
 
-  document.getElementById('btn-contact-add').addEventListener('click', addNewContact)
+  document.getElementById('btn-contact-add').addEventListener('click', () => {
+    addNewContact()
+    updateContactVariables()
+  })
   document.getElementById('btn-submit').addEventListener('click', onSubmit)
   document.getElementById('btn-delete').addEventListener('click', onDelete)
+  document.getElementById('message').addEventListener('focusout', updateContactVariables)
 }
 
 function onDelete () {
@@ -98,10 +100,18 @@ function updateContactVariables () {
   const variables = getCurrentVariablesFromMessage()
 
   for (let node of contactsListNodes) {
+    const formList = node.querySelector('#form-variables-list')
+
+    Array.from(formList.childNodes).forEach(child => {
+      if (!variables.includes(child.getAttribute('id'))) {
+        formList.removeChild(child)
+      }
+    })
+
     for (let variable of variables) {
-      node
-        .querySelector('#form-variables-list')
-        .appendChild(getFormVariablesEl(variable))
+      if (!formList.querySelector(`input[id^="${variable}_"]`)) {
+        formList.appendChild(getFormVariablesEl(variable))
+      }
     }
   }
 }
