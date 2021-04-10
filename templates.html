@@ -37,23 +37,7 @@
             </button>
           </div>
 
-          <div class="row g-2">
-            <div class="col-10 col-md-5">
-              <input type="text" class="form-control" id="contact-luan" placeholder="Insira o nome do contato">
-
-              <div class="col-12 form-variables">
-                <label for="var-luan-nome" class="form-label">$nome</label>
-                <input type="text" class="form-control" id="var-luan-nome">
-              </div>
-            </div>
-
-            <div class="col-2 col-md-1 text-end">
-              <button type="button" class="btn btn-outline-danger">
-                <i class="bi bi-x"></i>
-              </button>
-            </div>
-
-          </div>
+          <div id="contacts-list" class="row g-2"></div>
 
           <div class="col-12 text-end">
             <button type="button" class="btn btn-primary">Salvar</button>
@@ -61,10 +45,28 @@
         </form>
       </div>
     </div>
-
   </div>
 
-  <!-- <script src="templates.js"></script> -->
+  <template id="contact-card-template">
+    <span id="contact-card" class="col-12 col-md-6" style="display: flex;">
+      <div style="flex-grow: 0;">
+        <input type="text" class="form-control" id="contact-luan" placeholder="Insira o nome do contato">
+
+        <div class="col-12 form-variables">
+          <label for="var-luan-nome" class="form-label">$nome</label>
+          <input type="text" class="form-control" id="var-luan-nome">
+        </div>
+      </div>
+
+      <div style="flex-grow: 1; padding-left: 5px;">
+        <button type="button" class="btn btn-outline-danger">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    </span>
+  </template>
+
+  <script src="templates.js"></script>
   <script src="./lib/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 </body>
 </html>
