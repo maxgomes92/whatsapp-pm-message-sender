@@ -13,18 +13,18 @@
   <div class="template-form">
     <div class="card">
       <div class="card-body">
-        <form class="row g-3">
+        <form class="row g-3" id="template-form">
           <div>
             <small>id: 239018093</small>
           </div>
 
           <div class="col-12">
             <label for="title" class="form-label">Título</label>
-            <input type="text" class="form-control" id="title">
+            <input type="text" class="form-control" id="title" placeholder="Insira um título para este template">
           </div>
           <div class="col-12">
             <label for="message" class="form-label">Mensagem</label>
-            <textarea class="form-control" id="message" rows="5"></textarea>
+            <textarea class="form-control" id="message" rows="5" placeholder="Insira a mensagem a ser enviada. (Use $ para criar variáveis)"></textarea>
           </div>
 
           <div class="col-10">
@@ -39,8 +39,14 @@
 
           <div id="contacts-list" class="row g-2"></div>
 
-          <div class="col-12 text-end">
-            <button type="button" class="btn btn-primary">Salvar</button>
+          <div class="text-end">
+            <button type="button" class="btn btn-danger btn-outline" id="btn-delete">
+              Deletar
+            </button>
+
+            <button type="button" class="btn btn-primary" id="btn-submit">
+              Salvar
+            </button>
           </div>
         </form>
       </div>
@@ -49,13 +55,9 @@
 
   <template id="contact-card-template">
     <span id="contact-card" class="col-12 col-md-6 contact-card">
-      <div style="flex-grow: 0; padding: 10px;">
+      <div id="contact-card-form" style="flex-grow: 0; padding: 10px;">
         <input type="text" class="form-control" id="contact-luan" placeholder="Insira o nome do contato">
-
-        <div class="col-12 form-variables">
-          <label for="var-luan-nome" class="form-label">$nome</label>
-          <input type="text" class="form-control" id="var-luan-nome">
-        </div>
+        <div id="form-variables-list"></div>
       </div>
 
       <div style="flex-grow: 1; padding: 10px;">
@@ -64,6 +66,13 @@
         </button>
       </div>
     </span>
+  </template>
+
+  <template id="form-variables-template">
+    <div id="form-variables" class="form-variables">
+      <label for="[variable]" class="form-label">[variable]</label>
+      <input type="text" class="form-control" id="[variable]">
+    </div>
   </template>
 
   <script src="templates.js"></script>
