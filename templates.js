@@ -1,7 +1,14 @@
 const template = {
   id: getRandomId(),
   title: 'Template zica',
-  message: 'Fala $nome, você tem $idade anos.'
+  message: 'Fala $nome, você tem $idade anos.',
+  contacts: [{
+    contactName: 'joao',
+    contactData: {
+      nome: 'Joao da Agenda',
+      idade: '23'
+    }
+  }]
 }
 
 function main () {
@@ -20,6 +27,10 @@ function main () {
   document.getElementById('btn-submit').addEventListener('click', onSubmit)
   document.getElementById('btn-delete').addEventListener('click', onDelete)
   document.getElementById('message').addEventListener('focusout', updateContactVariables)
+
+  document.querySelectorAll('input,textarea').forEach((el) => {
+    el.addEventListener('focusout', hideInvalidFormBadge)
+  })
 }
 
 function onDelete () {
@@ -44,13 +55,25 @@ function isAnyEmpty (obj) {
   return Object.values(obj).some(verifyDataTypes)
 }
 
+const getInvalidFormBadgeEl = () => document.getElementById('badge-invalid-form')
+
+const showInvalidFormBadge = () => {
+  getInvalidFormBadgeEl().style.visibility = 'visible'
+}
+
+const hideInvalidFormBadge = () => {
+  getInvalidFormBadgeEl().style.visibility = 'hidden'
+}
+
 function onSubmit () {
   const formData = getFormData()
 
   if (isAnyEmpty(formData)) {
-    return console.log('empty')
+    showInvalidFormBadge()
+    return;
   }
 
+  hideInvalidFormBadge()
   console.log('onSubmit', formData)
 }
 
@@ -139,7 +162,6 @@ function updateContactVariables () {
 }
 
 function getCurrentVariablesFromMessage () {
-  // const formData = new FormData(document.querySelector('form'))
   const message = document.getElementById('message').value
   const regex = new RegExp(/\$\w+/g)
   const variables = []
