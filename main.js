@@ -1,6 +1,6 @@
 function main () {
   loadContacts()
-  sendMessageTo('Luan')
+  // sendMessageTo('Luan')
 }
 
 async function loadContacts () {

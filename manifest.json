@@ -2,7 +2,17 @@
     "name": "Private Message Sender",
     "version": "0.0.1",
     "description": "Send primate message",
-    "permissions": [],
+    "permissions": [
+      "contextMenus",
+      "tabs"
+    ],
+    "background": {
+      "page": "background.html"
+    },
+    "page_action": {
+      "default_title": "Templates de Mensagem",
+      "default_popup": "popup.html"
+    },
     "content_scripts": [
       {
         "matches": ["https://web.whatsapp.com/"],

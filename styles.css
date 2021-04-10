@@ -1,0 +1,23 @@
+.templates-list {
+  width: 400px;
+}
+
+.template-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
+
+.template-form form {
+  max-width: 756px;
+}
+
+body {
+  background-color: #00bfa5;
+}
+
+.form-variables {
+  padding: 10px 15px 10px 30px;
+  background-color: #f5f5f5;
+}
