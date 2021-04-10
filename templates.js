@@ -75,6 +75,10 @@ function onSubmit () {
 
   hideInvalidFormBadge()
   console.log('onSubmit', formData)
+
+  // chrome.tabs.getCurrent(function(tab) {
+  //   chrome.tabs.remove(tab.id);
+  // });
 }
 
 function getFormData () {
@@ -111,7 +115,7 @@ function addNewContact () {
     contactsList.removeChild(contactCard)
   })
 
-  contactsList.appendChild(contactCard)
+  contactsList.insertBefore(contactCard, contactsList.firstChild)
 }
 
 function getRandomId () {
