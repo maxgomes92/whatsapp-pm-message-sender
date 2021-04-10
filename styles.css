@@ -19,5 +19,15 @@ body {
 
 .form-variables {
   padding: 10px 15px 10px 30px;
+}
+
+.contact-card {
+  display: flex;
   background-color: #f5f5f5;
+  background-clip: content-box;
+  padding: 5px;
+}
+
+.contact-card:nth-child(odd) {
+  padding-right: 5px;
 }
