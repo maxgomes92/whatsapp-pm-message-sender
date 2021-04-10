@@ -26,8 +26,30 @@ function onDelete () {
   console.log('delete')
 }
 
+function isAnyEmpty (obj) {
+  const verifyDataTypes = (value) => {
+    if (!value) return true;
+
+    if (Array.isArray(value)) {
+      return value.some((el) => verifyDataTypes(el))
+    }
+
+    if (typeof value === 'object') {
+      return isAnyEmpty(value)
+    }
+
+    return false
+  }
+
+  return Object.values(obj).some(verifyDataTypes)
+}
+
 function onSubmit () {
   const formData = getFormData()
+
+  if (isAnyEmpty(formData)) {
+    return console.log('empty')
+  }
 
   console.log('onSubmit', formData)
 }
