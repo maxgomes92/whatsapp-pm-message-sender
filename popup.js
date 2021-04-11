@@ -8,11 +8,20 @@ function main () {
 async function loadListOfTemplates () {
   const templates = await getTemplates()
 
-  console.log(templates, 'ae')
-
   const listOfTemplatesEl = document.getElementById('list-of-templates')
+
   Object.values(templates).forEach((template) => {
-    // listOfTemplatesEl.appendChild(template.id)
+    const templateTemplate = document.importNode(document.getElementById('template').content, true);
+    const templateEl = templateTemplate.querySelector('[data-cid="template-item"]')
+
+    templateEl.querySelector('[data-cid="template-title"]').innerText = template.title
+    templateEl.querySelector('[data-cid="template-number-of-contacts"]').innerText = template.contacts.length
+
+    const limit = 200
+    const message = template.message.slice(0, limit)
+    templateEl.querySelector('[data-cid="template-message"]').innerText = message.length === limit ? message + '...' : message
+
+    listOfTemplatesEl.appendChild(templateEl)
   })
 }
 
@@ -24,11 +33,12 @@ function getTemplates () {
   })
 }
 
+function createTemplate () {
+  chrome.tabs.create({ url: chrome.runtime.getURL("templates.html") });
+}
+
 function setupListeners () {
-  document.getElementById("btn-create").addEventListener("click", () => {
-    const url = chrome.runtime.getURL("templates.html") + `?id=123456`
-    chrome.tabs.create({ url });
-  });
+  document.getElementById("btn-create").addEventListener("click", createTemplate);
 }
 
 main()
