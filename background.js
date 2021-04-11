@@ -42,6 +42,7 @@ chrome.runtime.onMessage.addListener((request = {}, sender, sendResponse) => {
       break
     case 'GET_TEMPLATES':
       sendResponse({ success: true, payload: getTemplates() })
+      break
     case 'DELETE_TEMPLATE':
       deleteTemplate(request.payload.id)
       break
