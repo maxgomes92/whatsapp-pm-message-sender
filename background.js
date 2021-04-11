@@ -23,30 +23,40 @@ function deleteTemplate (id) {
   saveTemplates(templates)
 }
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // if (tab.url === 'https://web.whatsapp.com/' && tab.status === 'complete') {
-    chrome.pageAction.show(tabId);
-  // }
-});
+let wppTab
+function setupListeners () {
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (tab.url === 'https://web.whatsapp.com/' && tab.status === 'complete') {
+      chrome.pageAction.show(tabId);
+    }
+  });
 
-chrome.runtime.onMessage.addListener((request = {}, sender, sendResponse) => {
-  console.log('onMessage', request)
+  chrome.runtime.onMessage.addListener((request = {}, sender, sendResponse) => {
+    console.log('onMessage', request)
 
-  switch (request.type) {
-    case 'SAVE_TEMPLATE':
-      saveTemplate(request.payload)
-      sendResponse({ success: true })
-      break
-    case 'GET_TEMPLATE':
-      sendResponse({ success: true, payload: getTemplate(request.payload.id) })
-      break
-    case 'GET_TEMPLATES':
-      sendResponse({ success: true, payload: getTemplates() })
-      break
-    case 'DELETE_TEMPLATE':
-      deleteTemplate(request.payload.id)
-      break
-    default:
-      throw new Error('Invalid or not handled message')
-  }
-});
+    switch (request.type) {
+      case 'SAVE_TEMPLATE':
+        saveTemplate(request.payload)
+        sendResponse({ success: true })
+        break
+      case 'GET_TEMPLATE':
+        sendResponse({ success: true, payload: getTemplate(request.payload.id) })
+        break
+      case 'GET_TEMPLATES':
+        sendResponse({ success: true, payload: getTemplates() })
+        break
+      case 'DELETE_TEMPLATE':
+        deleteTemplate(request.payload.id)
+        break
+      case 'REGISTER_WPP_TAB':
+        wppTab = sender.tab
+        break
+      case 'SEND_MESSAGE':
+        chrome.tabs.sendMessage(wppTab.id, request);
+      default:
+        console.warn('Invalid or not handled message')
+    }
+  });
+}
+
+setupListeners()

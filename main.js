@@ -1,6 +1,31 @@
 function main () {
   loadContacts()
-  // sendMessageTo('Luan')
+  setupListeners()
+}
+
+function setupListeners() {
+  chrome.runtime.onMessage.addListener((request = {}, sender, sendResponse) => {
+    switch (request.type) {
+      case 'SEND_MESSAGE':
+        sendMessageFromTemplate(request.payload)
+        break
+      default:
+        console.warn('Invalid or unhandled message')
+    }
+  })
+
+  chrome.runtime.sendMessage({type: "REGISTER_WPP_TAB"});
+}
+
+function sendMessageFromTemplate (template) {
+  for(let contact of template.contacts) {
+    const {contactName, contactData} = contact
+    const message = Object.entries(contactData).reduce((acc, [key, value]) => {
+      return acc.replace(new RegExp(`\\${key}`, 'g'), value)
+    }, template.message)
+
+    sendMessageTo(contactName, message)
+  }
 }
 
 async function loadContacts () {
@@ -102,9 +127,9 @@ async function getChatEl (name) {
   throw new Error('Can\'t find contact' + name)
 }
 
-const sendMessageTo = async (name) => {
+const sendMessageTo = async (name, message) => {
   await openChat(name)
-  await setMessage('salve do bot')
+  await setMessage(message)
   await sendMessage()
 }
 

@@ -40,6 +40,11 @@ function renderTemplate (template) {
     const url = chrome.runtime.getURL("templates.html") + `?id=${template.id}`
     chrome.tabs.create({ url });
   })
+
+  document.getElementById("btn-send").addEventListener("click", () => {
+    console.log('send')
+    sendMessage(template)
+  });
 }
 
 function getTemplates () {
@@ -56,6 +61,10 @@ function createTemplate () {
 
 function setupListeners () {
   document.getElementById("btn-create").addEventListener("click", createTemplate);
+}
+
+function sendMessage (payload) {
+  chrome.runtime.sendMessage({type: "SEND_MESSAGE", payload});
 }
 
 main()
