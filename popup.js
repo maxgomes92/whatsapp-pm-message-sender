@@ -1,5 +1,3 @@
-
-
 function main () {
   setupListeners()
   loadListOfTemplates()
@@ -37,6 +35,11 @@ function renderTemplate (template) {
   // Change content
   document.querySelector('[id="template-details"] [data-cid="template-title"]').innerText = template.title
   document.querySelector('[id="template-details"] [data-cid="template-message"]').innerText = template.message
+
+  document.getElementById('btn-edit').addEventListener('click', () => {
+    const url = chrome.runtime.getURL("templates.html") + `?id=${template.id}`
+    chrome.tabs.create({ url });
+  })
 }
 
 function getTemplates () {

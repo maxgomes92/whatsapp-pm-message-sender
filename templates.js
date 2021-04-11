@@ -232,6 +232,20 @@ async function setupForm() {
       el.value = value
     }
   });
+
+  template.contacts.forEach(addNewContact)
+  updateContactVariables()
+
+  const contactsList = Array.from(document.getElementById('contacts-list').childNodes)
+
+  template.contacts.forEach((contact, i) => {
+    contactsList[i].querySelector('input[id^="contact-"]').value = contact.contactName
+
+    Object.entries(contact.contactData).forEach(([key, value]) => {
+      contactsList[i].querySelector(`input[id^="${key}_"]`).value = value
+    })
+  })
+
 }
 
 main()
