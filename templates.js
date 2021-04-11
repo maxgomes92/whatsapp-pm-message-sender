@@ -6,10 +6,21 @@ function main () {
 }
 
 function getTemplate () {
-  const templates = getTemplates()
-  const params = new URLSearchParams(window.location.search)
+  return new Promise((resolve) => {
+    const params = new URLSearchParams(window.location.search)
 
-  return templates[params.get('id')] || getEmptyTemplate()
+    if (chrome.runtime) {
+      chrome.runtime.sendMessage({type: "GET_TEMPLATE", payload: { id: params.get('id') }}, ({ success, payload }) => {
+        if (success) {
+          resolve(payload || getEmptyTemplate())
+        } else {
+          resolve(getEmptyTemplate())
+        }
+      });
+    } else {
+      resolve(getEmptyTemplate())
+    }
+  })
 }
 
 function getEmptyTemplate () {
@@ -19,10 +30,6 @@ function getEmptyTemplate () {
     message: '',
     contacts: [],
   }
-}
-
-function getTemplates () {
-  return JSON.parse(localStorage.getItem('templates') || '{}')
 }
 
 function setupEventListeners () {
@@ -44,16 +51,11 @@ function setupEventListeners () {
 }
 
 function onDelete () {
-  const templates = getTemplates()
-
-  delete templates[template.id]
-
-  saveTemplates(templates)
-
   if (chrome.tabs) {
-    // Possible only when opened by extension
-    chrome.tabs.getCurrent(function(tab) {
-      chrome.tabs.remove(tab.id);
+    chrome.runtime.sendMessage({type: "DELETE_TEMPLATE", payload: { id: template.id }}, () => {
+      chrome.tabs.getCurrent(function(tab) {
+        chrome.tabs.remove(tab.id);
+      });
     });
   }
 }
@@ -95,16 +97,12 @@ const hideSuccessFormBadge = () => {
   getSuccessFormBadgeEl().style.visibility = 'hidden'
 }
 
-function saveTemplate (data) {
-  const templates = getTemplates()
-  templates[data.id] = data
-  saveTemplates(templates)
-
-  showSuccessFormBadge()
-}
-
-function saveTemplates (templates) {
-  localStorage.setItem('templates', JSON.stringify(templates))
+function saveTemplate (payload) {
+  chrome.runtime.sendMessage({type: "SAVE_TEMPLATE", payload }, ({ success }) => {
+    if (success) {
+      showSuccessFormBadge()
+    }
+  });
 }
 
 function onSubmit () {
@@ -117,8 +115,6 @@ function onSubmit () {
 
   hideInvalidFormBadge()
   saveTemplate(formData)
-
-  console.log('onSubmit', formData)
 }
 
 function getFormData () {
@@ -139,6 +135,7 @@ function getFormData () {
 
 
   return {
+    id: template.id,
     title: document.getElementById('title').value,
     message: document.getElementById('message').value,
     contacts,
@@ -223,8 +220,8 @@ function getCurrentVariablesFromMessage () {
   return variables
 }
 
-function setupForm() {
-  template = getTemplate()
+async function setupForm() {
+  template = await getTemplate()
 
   document.getElementById('template-id').innerText = `id: ${template.id}`
 

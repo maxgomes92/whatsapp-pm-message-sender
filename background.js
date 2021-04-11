@@ -1,25 +1,51 @@
-// active: true
-// audible: true
-// autoDiscardable: true
-// discarded: false
-// favIconUrl: "https://web.whatsapp.com/img/favicon_c5088e888c97ad440a61d247596f88e5.png"
-// groupId: -1
-// height: 899
-// highlighted: true
-// id: 17
-// incognito: false
-// index: 0
-// mutedInfo: {muted: false}
-// pinned: true
-// selected: true
-// status: "loading"
-// title: "WhatsApp"
-// url: "https://web.whatsapp.com/"
-// width: 1075
-// windowId: 16
+function saveTemplates (templates) {
+  localStorage.setItem('templates', JSON.stringify(templates))
+}
+
+function getTemplates () {
+  return JSON.parse(localStorage.getItem('templates') || '{}')
+}
+
+function saveTemplate (template) {
+  const templates = getTemplates()
+  templates[template.id] = template
+  saveTemplates(templates)
+}
+
+function getTemplate (id) {
+  const templates = getTemplates()
+  return templates[id]
+}
+
+function deleteTemplate (id) {
+  const templates = getTemplates()
+  delete templates[id]
+  saveTemplates(templates)
+}
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   // if (tab.url === 'https://web.whatsapp.com/' && tab.status === 'complete') {
     chrome.pageAction.show(tabId);
   // }
+});
+
+chrome.runtime.onMessage.addListener((request = {}, sender, sendResponse) => {
+  console.log('onMessage', request)
+
+  switch (request.type) {
+    case 'SAVE_TEMPLATE':
+      saveTemplate(request.payload)
+      sendResponse({ success: true })
+      break
+    case 'GET_TEMPLATE':
+      sendResponse({ success: true, payload: getTemplate(request.payload.id) })
+      break
+    case 'GET_TEMPLATES':
+      sendResponse({ success: true, payload: getTemplates() })
+    case 'DELETE_TEMPLATE':
+      deleteTemplate(request.payload.id)
+      break
+    default:
+      throw new Error('Invalid or not handled message')
+  }
 });
