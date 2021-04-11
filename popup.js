@@ -21,8 +21,22 @@ async function loadListOfTemplates () {
     const message = template.message.slice(0, limit)
     templateEl.querySelector('[data-cid="template-message"]').innerText = message.length === limit ? message + '...' : message
 
+    templateEl.addEventListener('click', () => {
+      renderTemplate(template)
+    })
+
     listOfTemplatesEl.appendChild(templateEl)
   })
+}
+
+function renderTemplate (template) {
+  // Hide/Show
+  document.getElementById('templates-list').style.display = 'none'
+  document.getElementById('template-details').style.display = 'flex'
+
+  // Change content
+  document.querySelector('[id="template-details"] [data-cid="template-title"]').innerText = template.title
+  document.querySelector('[id="template-details"] [data-cid="template-message"]').innerText = template.message
 }
 
 function getTemplates () {

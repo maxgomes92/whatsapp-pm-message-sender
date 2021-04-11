@@ -1,5 +1,6 @@
-.templates-list {
+.popup-body {
   width: 400px;
+  flex: 1;
 }
 
 .template-form {
@@ -34,4 +35,10 @@
 
 .card {
   min-width: 300px;
+}
+
+.template-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
 }
