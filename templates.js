@@ -6,7 +6,7 @@ function main () {
 }
 
 function getTemplate () {
-  const templates = JSON.parse(localStorage.getItem('templates') || '{}')
+  const templates = getTemplates()
   const params = new URLSearchParams(window.location.search)
 
   return templates[params.get('id')] || getEmptyTemplate()
@@ -19,6 +19,10 @@ function getEmptyTemplate () {
     message: '',
     contacts: [],
   }
+}
+
+function getTemplates () {
+  return JSON.parse(localStorage.getItem('templates') || '{}')
 }
 
 function setupEventListeners () {
@@ -40,7 +44,18 @@ function setupEventListeners () {
 }
 
 function onDelete () {
-  console.log('delete')
+  const templates = getTemplates()
+
+  delete templates[template.id]
+
+  saveTemplates(templates)
+
+  if (chrome.tabs) {
+    // Possible only when opened by extension
+    chrome.tabs.getCurrent(function(tab) {
+      chrome.tabs.remove(tab.id);
+    });
+  }
 }
 
 function isAnyEmpty (obj) {
@@ -80,12 +95,16 @@ const hideSuccessFormBadge = () => {
   getSuccessFormBadgeEl().style.visibility = 'hidden'
 }
 
-function saveTemplate () {
-  const templates = JSON.parse(localStorage.getItem('templates') || '{}')
-  templates[template.id] = template
-  localStorage.setItem('templates', JSON.stringify(templates))
+function saveTemplate (data) {
+  const templates = getTemplates()
+  templates[data.id] = data
+  saveTemplates(templates)
 
   showSuccessFormBadge()
+}
+
+function saveTemplates (templates) {
+  localStorage.setItem('templates', JSON.stringify(templates))
 }
 
 function onSubmit () {
@@ -97,13 +116,9 @@ function onSubmit () {
   }
 
   hideInvalidFormBadge()
-  saveTemplate()
+  saveTemplate(formData)
 
   console.log('onSubmit', formData)
-
-  // chrome.tabs.getCurrent(function(tab) {
-  //   chrome.tabs.remove(tab.id);
-  // });
 }
 
 function getFormData () {
@@ -140,7 +155,7 @@ function addNewContact () {
     contactsList.removeChild(contactCard)
   })
 
-  contactsList.insertBefore(contactCard, contactsList.firstChild)
+  contactsList.appendChild(contactCard)
 }
 
 function getRandomId () {
@@ -177,7 +192,7 @@ function updateContactVariables () {
     const formList = node.querySelector('#form-variables-list')
 
     Array.from(formList.childNodes).forEach(child => {
-      if (!variables.includes(child.getAttribute('id'))) {
+      if (!variables.includes(child.innerText)) {
         formList.removeChild(child)
       }
     })
