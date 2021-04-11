@@ -15,27 +15,29 @@
       <div class="card-body">
         <form class="row g-3" id="template-form">
           <div>
-            <small>id: 239018093</small>
+            <small id="template-id">id:</small>
           </div>
 
           <div class="col-12">
-            <label for="title" class="form-label">Título</label>
-            <input type="text" class="form-control" id="title" placeholder="Insira um título para este template">
+            <label for="title" class="form-label">Nome do Template</label>
+            <input type="text" class="form-control" id="title" placeholder="Insira um nome para este template (ex: Mensagem de Páscoa)">
           </div>
           <div class="col-12">
             <label for="message" class="form-label">Mensagem</label>
             <textarea class="form-control" id="message" rows="5" placeholder="Insira a mensagem a ser enviada. (Use $ para criar variáveis)"></textarea>
           </div>
 
-          <div class="col-10">
-            <h4>Lista de envio</h4>
-          </div>
+          <div style="display: flex;">
+            <div style="flex-grow: 1;">
+              <h4>Lista de envio</h4>
+            </div>
 
-          <div class="col-2 text-end">
-            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-contact-add">
-              <i class="bi bi-plus"></i>
-              Adicionar
-            </button>
+            <div class="text-end" style="flex-grow: 1;">
+              <button type="button" class="btn btn-outline-primary btn-sm" id="btn-contact-add">
+                <i class="bi bi-plus"></i>
+                Adicionar
+              </button>
+            </div>
           </div>
 
           <div id="contacts-list" class="row g-2"></div>
@@ -44,14 +46,22 @@
             <span class="badge bg-danger" style="font-size: small;">Formulário inválido. Preencha todos os campos! =)</span>
           </div>
 
-          <div class="text-end">
-            <button type="button" class="btn btn-danger btn-outline" id="btn-delete">
-              Deletar
-            </button>
+          <div class="text-center" id="badge-success-form" style="visibility: hidden;">
+            <span class="badge bg-success" style="font-size: small;">Template salvo com sucesso! Volte para o WhatsApp para enviá-lo!</span>
+          </div>
 
-            <button type="button" class="btn btn-primary" id="btn-submit">
-              Salvar
-            </button>
+          <div style="display: flex;">
+            <div style="flex-grow: 1;">
+              <button type="button" class="btn btn-danger btn-outline" id="btn-delete">
+                Deletar
+              </button>
+            </div>
+
+            <div class="text-end" style="flex-grow: 1;">
+              <button type="button" class="btn btn-primary" id="btn-submit">
+                Salvar
+              </button>
+            </div>
           </div>
         </form>
       </div>

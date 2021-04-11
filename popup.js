@@ -1,3 +1,5 @@
 document.getElementById("btn-create").addEventListener("click", () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL("templates.html") });
+  const url = chrome.runtime.getURL("templates.html") + '?id=123456'
+
+  chrome.tabs.create({ url });
 });

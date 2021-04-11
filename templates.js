@@ -1,35 +1,41 @@
-const template = {
-  id: getRandomId(),
-  title: 'Template zica',
-  message: 'Fala $nome, você tem $idade anos.',
-  contacts: [{
-    contactName: 'joao',
-    contactData: {
-      nome: 'Joao da Agenda',
-      idade: '23'
-    }
-  }]
-}
+let template = {}
 
 function main () {
-
   setupForm()
+  setupEventListeners()
+}
 
-  // Temp
-  addNewContact()
-  addNewContact()
-  updateContactVariables()
+function getTemplate () {
+  const templates = JSON.parse(localStorage.getItem('templates') || '{}')
+  const params = new URLSearchParams(window.location.search)
+
+  return templates[params.get('id')] || getEmptyTemplate()
+}
+
+function getEmptyTemplate () {
+  return {
+    id: getRandomId(),
+    title: '',
+    message: '',
+    contacts: [],
+  }
+}
+
+function setupEventListeners () {
+  document.getElementById('btn-submit').addEventListener('click', onSubmit)
+  document.getElementById('btn-delete').addEventListener('click', onDelete)
+  document.getElementById('message').addEventListener('focusout', updateContactVariables)
 
   document.getElementById('btn-contact-add').addEventListener('click', () => {
     addNewContact()
     updateContactVariables()
   })
-  document.getElementById('btn-submit').addEventListener('click', onSubmit)
-  document.getElementById('btn-delete').addEventListener('click', onDelete)
-  document.getElementById('message').addEventListener('focusout', updateContactVariables)
 
   document.querySelectorAll('input,textarea').forEach((el) => {
-    el.addEventListener('focusout', hideInvalidFormBadge)
+    el.addEventListener('focusout', () => {
+      hideInvalidFormBadge()
+      hideSuccessFormBadge()
+    })
   })
 }
 
@@ -56,6 +62,7 @@ function isAnyEmpty (obj) {
 }
 
 const getInvalidFormBadgeEl = () => document.getElementById('badge-invalid-form')
+const getSuccessFormBadgeEl = () => document.getElementById('badge-success-form')
 
 const showInvalidFormBadge = () => {
   getInvalidFormBadgeEl().style.visibility = 'visible'
@@ -63,6 +70,22 @@ const showInvalidFormBadge = () => {
 
 const hideInvalidFormBadge = () => {
   getInvalidFormBadgeEl().style.visibility = 'hidden'
+}
+
+const showSuccessFormBadge = () => {
+  getSuccessFormBadgeEl().style.visibility = 'visible'
+}
+
+const hideSuccessFormBadge = () => {
+  getSuccessFormBadgeEl().style.visibility = 'hidden'
+}
+
+function saveTemplate () {
+  const templates = JSON.parse(localStorage.getItem('templates') || '{}')
+  templates[template.id] = template
+  localStorage.setItem('templates', JSON.stringify(templates))
+
+  showSuccessFormBadge()
 }
 
 function onSubmit () {
@@ -74,6 +97,8 @@ function onSubmit () {
   }
 
   hideInvalidFormBadge()
+  saveTemplate()
+
   console.log('onSubmit', formData)
 
   // chrome.tabs.getCurrent(function(tab) {
@@ -119,7 +144,7 @@ function addNewContact () {
 }
 
 function getRandomId () {
-  return Math.random().toString(32)
+  return Math.random().toString(32).split('.')[1]
 }
 
 function getFormVariablesEl (variableName) {
@@ -184,6 +209,10 @@ function getCurrentVariablesFromMessage () {
 }
 
 function setupForm() {
+  template = getTemplate()
+
+  document.getElementById('template-id').innerText = `id: ${template.id}`
+
   Object.entries(template).forEach(([key, value]) => {
     const el = document.getElementById(key)
 

@@ -31,3 +31,7 @@ body {
 .contact-card:nth-child(odd) {
   padding-right: 5px;
 }
+
+.card {
+  min-width: 300px;
+}
