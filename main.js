@@ -9,7 +9,7 @@ function setupListeners() {
         sendMessageFromTemplate(request.payload)
         break
       case 'LOAD_CONTACTS':
-        fetchAllContacts()
+        fetchAndSaveContacts()
         break
       default:
         console.warn('Invalid or unhandled message')
@@ -30,17 +30,6 @@ function sendMessageFromTemplate (template) {
   }
 }
 
-async function loadContacts () {
-  let contacts = load('contacts')
-
-  if (!contacts) {
-    contacts = await fetchAllContacts()
-    save('contacts', contacts)
-  }
-
-  return contacts
-}
-
 function save (key, data) {
   localStorage.setItem(key, JSON.stringify(data))
 }
@@ -56,7 +45,7 @@ const waitFor = (time) => new Promise((resolve, reject) => {
   }, time)
 })
 
-const fetchAllContacts = async () => {
+const fetchAndSaveContacts = async () => {
   const paneSide = await getPaneSide()
   const chatList = Array.from((await getChatList()).children)
 
@@ -77,7 +66,11 @@ const fetchAllContacts = async () => {
 
   paneSide.scrollTop = 0
 
-  return Array.from(contacts).sort()
+  saveContacts(Array.from(contacts).sort())
+}
+
+function saveContacts (contacts) {
+  chrome.runtime.sendMessage({type: "SAVE_CONTACTS", payload: contacts});
 }
 
 const getMessageInputEl = () => waitUntilYouFind('div[spellcheck="true"]')

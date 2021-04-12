@@ -23,6 +23,14 @@ function deleteTemplate (id) {
   saveTemplates(templates)
 }
 
+function saveContacts (contacts = []) {
+  localStorage.setItem('contacts', JSON.stringify(contacts))
+}
+
+function getContacts () {
+  return JSON.parse(localStorage.getItem('contacts') || '{}')
+}
+
 let wppTab
 function setupListeners () {
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -53,9 +61,15 @@ function setupListeners () {
         break
       case 'SEND_MESSAGE':
         chrome.tabs.sendMessage(wppTab.id, request);
+        break
       case 'LOAD_CONTACTS':
         chrome.tabs.sendMessage(wppTab.id, request)
         break
+      case 'SAVE_CONTACTS':
+        saveContacts(request.payload)
+        break
+      case 'GET_CONTACTS':
+        sendResponse(getContacts())
       default:
         console.warn('Invalid or not handled message')
     }
