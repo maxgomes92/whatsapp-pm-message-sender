@@ -59,8 +59,13 @@ function createTemplate () {
   chrome.tabs.create({ url: chrome.runtime.getURL("templates.html") });
 }
 
+function loadContacts () {
+  chrome.runtime.sendMessage({type: "LOAD_CONTACTS"});
+}
+
 function setupListeners () {
   document.getElementById("btn-create").addEventListener("click", createTemplate);
+  document.getElementById("btn-load-contacts").addEventListener("click", loadContacts);
 }
 
 function sendMessage (payload) {

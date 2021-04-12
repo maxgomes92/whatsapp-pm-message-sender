@@ -53,6 +53,9 @@ function setupListeners () {
         break
       case 'SEND_MESSAGE':
         chrome.tabs.sendMessage(wppTab.id, request);
+      case 'LOAD_CONTACTS':
+        chrome.tabs.sendMessage(wppTab.id, request)
+        break
       default:
         console.warn('Invalid or not handled message')
     }

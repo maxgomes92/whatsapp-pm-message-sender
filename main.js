@@ -1,5 +1,4 @@
 function main () {
-  loadContacts()
   setupListeners()
 }
 
@@ -8,6 +7,9 @@ function setupListeners() {
     switch (request.type) {
       case 'SEND_MESSAGE':
         sendMessageFromTemplate(request.payload)
+        break
+      case 'LOAD_CONTACTS':
+        fetchAllContacts()
         break
       default:
         console.warn('Invalid or unhandled message')
@@ -71,7 +73,7 @@ const fetchAllContacts = async () => {
       const titleEl = chatEl.querySelector('span[title]')
       contacts.add(titleEl.getAttribute('title'))
     })
-  } while ((paneSide.scrollTop + paneSide.offsetHeight) !== paneSide.scrollHeight)
+  } while ((paneSide.scrollTop + paneSide.offsetHeight) < (paneSide.scrollHeight - 50))
 
   paneSide.scrollTop = 0
 
