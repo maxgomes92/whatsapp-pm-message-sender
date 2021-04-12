@@ -53,15 +53,16 @@ const fetchAndSaveContacts = async () => {
 
   const contacts = new Set()
 
+  await scrollPaneSideToTop()
+
   do {
-    paneSide.scrollTop += scrollingStep;
-
-    await waitFor(100)
-
     chatList.forEach((chatEl) => {
       const titleEl = chatEl.querySelector('span[title]')
       contacts.add(titleEl.getAttribute('title'))
     })
+
+    paneSide.scrollTop += scrollingStep;
+    await waitFor(100)
   } while ((paneSide.scrollTop + paneSide.offsetHeight) < (paneSide.scrollHeight - 50))
 
   paneSide.scrollTop = 0
@@ -77,7 +78,7 @@ const getMessageInputEl = () => waitUntilYouFind('div[spellcheck="true"]')
 const getSendButton = () => waitUntilYouFind('span[data-testid="send"]')
 const getSearchInput = () => waitUntilYouFind('div[id="side"] div[contenteditable="true"]')
 const getPaneSide = () => waitUntilYouFind('#pane-side')
-const getChatList = () => waitUntilYouFind('div[aria-label="Chat list"]')
+const getChatList = () => waitUntilYouFind('[id="pane-side"] [role="grid"]')
 
 const setMessage = async (msg) => {
   const msgEl = await getMessageInputEl()

@@ -1,5 +1,5 @@
 let template = {}
-let contacts = []
+let contacts = new Set()
 
 function main () {
   setupForm()
@@ -8,8 +8,18 @@ function main () {
 }
 
 function getContacts () {
-  chrome.runtime.sendMessage({type: 'GET_CONTACTS'}, (data) => {
-    contacts = data
+  chrome.runtime.sendMessage({type: 'GET_CONTACTS'}, (listOfContacts) => {
+    contacts = new Set(listOfContacts)
+    setupAutocomplete(listOfContacts)
+  })
+}
+
+function setupAutocomplete (listOfContacts) {
+  const contactsList = Array.from(document.getElementById('contacts-list').childNodes)
+
+  contactsList.forEach(el => {
+    const nameInput = el.querySelector('input[id^="contact-"]')
+    autocomplete(nameInput, listOfContacts)
   })
 }
 

@@ -70,6 +70,7 @@ function setupListeners () {
         break
       case 'GET_CONTACTS':
         sendResponse(getContacts())
+        break
       default:
         console.warn('Invalid or not handled message')
     }
