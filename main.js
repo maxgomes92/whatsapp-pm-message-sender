@@ -19,14 +19,14 @@ function setupListeners() {
   chrome.runtime.sendMessage({type: "REGISTER_WPP_TAB"});
 }
 
-function sendMessageFromTemplate (template) {
+async function sendMessageFromTemplate (template) {
   for(let contact of template.contacts) {
     const {contactName, contactData} = contact
     const message = Object.entries(contactData).reduce((acc, [key, value]) => {
       return acc.replace(new RegExp(`\\${key}`, 'g'), value)
     }, template.message)
 
-    sendMessageTo(contactName, message)
+    await sendMessageTo(contactName, message)
   }
 }
 
@@ -97,6 +97,12 @@ const sendMessage = async () => {
 async function openChat (name) {
   const el = await getChatEl(name)
   el.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
+  await scrollPaneSideToTop()
+}
+
+async function scrollPaneSideToTop () {
+  const paneSide = await getPaneSide()
+  paneSide.scrollTop = 0
 }
 
 async function getChatEl (name) {
@@ -107,17 +113,18 @@ async function getChatEl (name) {
 
   const scrollingStep = (chatList[0].clientHeight * chatList.length) * 0.5
 
+  await scrollPaneSideToTop()
+
   do {
-    paneSide.scrollTop += scrollingStep;
-
-    await waitFor(100)
-
     const chatEl = getEl(name)
 
     if (chatEl) {
       return chatEl
     }
-  } while ((paneSide.scrollTop + paneSide.offsetHeight) !== paneSide.scrollHeight)
+
+    paneSide.scrollTop += scrollingStep;
+    await waitFor(100)
+  } while ((paneSide.scrollTop + paneSide.offsetHeight) < (paneSide.scrollHeight - 50))
 
   throw new Error('Can\'t find contact' + name)
 }
