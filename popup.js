@@ -42,9 +42,20 @@ function renderTemplate (template) {
   })
 
   document.getElementById("btn-send").addEventListener("click", () => {
-    console.log('send')
     sendMessage(template)
   });
+
+  const listOfContactsEl = document.querySelector('[data-cid="template-list-of-contacts"]')
+
+  contacts = template.contacts.sort((contactA, contactB) => {
+    return contactA.contactName.toUpperCase() > contactB.contactName.toUpperCase() ? 1 : -1
+  })
+
+  contacts.forEach((contact) => {
+    const li = document.createElement('li')
+    li.innerText = contact.contactName
+    listOfContactsEl.appendChild(li)
+  })
 }
 
 function getTemplates () {
