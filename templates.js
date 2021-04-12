@@ -1,8 +1,16 @@
 let template = {}
+let contacts = []
 
 function main () {
   setupForm()
   setupEventListeners()
+  getContacts()
+}
+
+function getContacts () {
+  chrome.runtime.sendMessage({type: 'GET_CONTACTS'}, (data) => {
+    contacts = data
+  })
 }
 
 function getTemplate () {
